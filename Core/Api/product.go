@@ -1,8 +1,8 @@
 package Api
 
 import (
-	"golang-restAPI-JWT/Core/Structs"
-	"golang-restAPI-JWT/Core/Models"
+	"golang-restAPI-FR/Core/Structs"
+	"golang-restAPI-FR/Core/Models"
 )
 
 func GetAllProducts() (prs_res Structs.ProductsResponse) {

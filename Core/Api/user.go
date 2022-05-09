@@ -2,9 +2,8 @@ package Api
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"golang-restAPI-JWT/Core/Structs"
-	"golang-restAPI-JWT/Core/Models"
-	"golang-restAPI-JWT/Auth"
+	"golang-restAPI-FR/Core/Structs"
+	"golang-restAPI-FR/Core/Models"
 )
 
 // Register one new user in db
@@ -58,12 +57,6 @@ func LoginUser(log_req Structs.LoginRequest) (log_res Structs.LoginResponse) {
 		return
 	}
 
-	tokenString, err:= Auth.GenerateJWT(user.Name, user.Email)
-	if err != nil {
-		log_res.ResponseCode = 207
-		log_res.ResponseMsg = "Invalid generate token"
-		return
-	}
-	log_res.Token = tokenString
+	log_res.Token = "asd"
 	return log_res;
 }

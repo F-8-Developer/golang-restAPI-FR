@@ -3,7 +3,7 @@ package Database
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	"golang-restAPI-JWT/Config"
+	"golang-restAPI-FR/Config"
 	_ "github.com/go-sql-driver/mysql"
 )
 

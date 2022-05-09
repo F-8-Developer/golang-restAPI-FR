@@ -4,10 +4,9 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"golang-restAPI-JWT/Core/Router/Public"
-	"golang-restAPI-JWT/Core/Router/Private"
-	"golang-restAPI-JWT/Middleware"
-	"golang-restAPI-JWT/Config"
+	"golang-restAPI-FR/Core/Router/Public"
+	"golang-restAPI-FR/Middleware"
+	"golang-restAPI-FR/Config"
 )
 
 // Varible define to here
@@ -40,7 +39,6 @@ func Start(env string) {
 	router.Use(Middleware.LoggerApp())
 	//No Permission Validation
 	Public.APIRouter(router)
-	Private.APIRouter(router)
 
 	router.Run(LisAddr)
 }

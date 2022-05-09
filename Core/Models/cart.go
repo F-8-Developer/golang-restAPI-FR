@@ -1,7 +1,7 @@
 package Models
 
 import (
-	"golang-restAPI-JWT/Database"
+	"golang-restAPI-FR/Database"
 	_ "github.com/go-sql-driver/mysql"
 )
 

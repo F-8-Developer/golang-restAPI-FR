@@ -8,10 +8,10 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
 
-	"golang-restAPI-JWT/Core/Structs"
-	"golang-restAPI-JWT/Core/Validator"
-	cv "golang-restAPI-JWT/Core/Validator/CustomValidation"
-	"golang-restAPI-JWT/Core/Api"
+	"golang-restAPI-FR/Core/Structs"
+	"golang-restAPI-FR/Core/Validator"
+	cv "golang-restAPI-FR/Core/Validator/CustomValidation"
+	"golang-restAPI-FR/Core/Api"
 )
 
 var (

@@ -18,13 +18,13 @@ Build with golang and gin with jwt authentication. It features a simple and bett
 
 * Init workdir
 ```sh
-git clone https://github.com/F-8-Developer/golang-restAPI-JWT.git
-cd golang-restAPI-JWT
+git clone https://github.com/F-8-Developer/golang-restAPI-FR.git
+cd golang-restAPI-FR
 ```
 
 * Build mod Vendor
 ```sh
-# make sure you have folder vendor in your root directory "golang-restAPI-JWT/vendor"
+# make sure you have folder vendor in your root directory "golang-restAPI-FR/vendor"
 # if you dont have folder vendor create new one with this command 
 mkdir vendor
 

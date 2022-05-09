@@ -1,7 +1,7 @@
 package Structs
 
 import (
-	"golang-restAPI-JWT/Core/Models"
+	"golang-restAPI-FR/Core/Models"
 )
 
 type ProductDetailRequest struct {

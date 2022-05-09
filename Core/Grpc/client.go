@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	pb "golang-restAPI-JWT/Core/Grpc/Services"
+	pb "golang-restAPI-FR/Core/Grpc/Services"
 
 	"google.golang.org/grpc"
 )

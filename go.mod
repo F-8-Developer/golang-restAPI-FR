@@ -1,4 +1,4 @@
-module golang-restAPI-JWT
+module golang-restAPI-FR
 
 go 1.17
 

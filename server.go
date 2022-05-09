@@ -3,15 +3,14 @@ import (
 	"fmt"
 	"net"
 
-	mgrpc "golang-restAPI-JWT/Core/Grpc"
+	mgrpc "golang-restAPI-FR/Core/Grpc"
 	log "github.com/Sirupsen/logrus"
-	pb "golang-restAPI-JWT/Core/Grpc/Services"
+	pb "golang-restAPI-FR/Core/Grpc/Services"
 	
-	"golang-restAPI-JWT/Config"
-	"golang-restAPI-JWT/Database"
-	"golang-restAPI-JWT/Database/Seed"
-	"golang-restAPI-JWT/Core/Router"
-	"golang-restAPI-JWT/Core/Models"
+	"golang-restAPI-FR/Config"
+	"golang-restAPI-FR/Database"
+	"golang-restAPI-FR/Core/Router"
+	"golang-restAPI-FR/Core/Models"
 	"google.golang.org/grpc"
 )
 
@@ -30,20 +29,6 @@ func main() {
 	Database.Mysql.AutoMigrate(&Models.Category{})
 	Database.Mysql.AutoMigrate(&Models.Product{})
 	Database.Mysql.AutoMigrate(&Models.Cart{})
-	var category Models.Category
-	var product Models.Product
-	err := Models.FirstCategory(&category)
-	err = Models.FirstProduct(&product)
-	if err != nil && category.Name == "" && product.Name == "" {
-		err = Seed.CategoryProductSeed()
-		if err != nil {
-			fmt.Println("seeder error : ", err)
-		}
-	}
-
-
-	// // Redis DB
-	// Redis.Client = Redis.NewClient()
 
 	// GRPC
 	// Here will enable grpc server, if you don`t want it, you can disable it
