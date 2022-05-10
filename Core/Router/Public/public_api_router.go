@@ -15,10 +15,7 @@ import (
 )
 
 var (
-	reg_req Structs.RegisterRequest
-	reg_res Structs.RegisterResponse
-	log_req Structs.LoginRequest
-	log_res Structs.LoginResponse
+	frq_req Structs.FriendRequestRequest
 )
 
 // APIRouter define router from here, you can add new api about your new services.
@@ -36,61 +33,132 @@ func APIRouter(router *gin.Engine) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "welcome to restAPI",
 			"userInfo": "Hello World!!!",
+			"readme": "https://github.com/F-8-Developer/golang-restAPI-FR/blob/main/README.md",
 		})
 	})
 
-	// DEFAULT ROUTE
-	router.POST("/register", func(c *gin.Context) {
+	// Friend Group
+	friend := router.Group("/friend")
+	// ============
+	
+	friend.POST("/request", func(c *gin.Context) {
 		// using BindJson method to serialize body with struct
-		if err := c.BindJSON(&reg_req); err != nil {
+		if err := c.BindJSON(&frq_req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"responseCode": 201,
+				"status": false,
 				"error": err.Error(),
 			})
-			reg_req = Structs.RegisterRequest{}
+			frq_req = Structs.FriendRequestRequest{}
 			return
 		}
 
-		if err := validate.Struct(reg_req); err != nil {
+		if err := validate.Struct(frq_req); err != nil {
 			errs := Validator.ToErrResponse(err, trans)
 			c.JSON(http.StatusBadRequest, gin.H{
-				"responseCode": 202,
-				"error": errs,
+				"status": false,
+				"errors": errs.Errors,
 			})
-			reg_req = Structs.RegisterRequest{}
+			frq_req = Structs.FriendRequestRequest{}
 			return
 		}
 
-		reg_res = Api.RegisterUser(reg_req)
-		c.JSON(reg_res.ResponseCode,&reg_res)
-		reg_req = Structs.RegisterRequest{}
+		response := Api.FriendRequest(frq_req)
+		c.JSON(200,&response)
+		frq_req = Structs.FriendRequestRequest{}
 	})
 
 
-	router.POST("/login", func(c *gin.Context) {
-		// using BindJson method to serialize body with struct
-		if err := c.BindJSON(&log_req); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"responseCode": 201,
-				"error": err.Error(),
-			})
-			log_req = Structs.LoginRequest{}
-			return
-		}
-
-		if err := validate.Struct(log_req); err != nil {
-			errs := Validator.ToErrResponse(err, trans)
-			c.JSON(http.StatusBadRequest, gin.H{
-				"responseCode": 202,
-				"error": errs,
-			})
-			log_req = Structs.LoginRequest{}
-			return
-		}
-
-		log_res = Api.LoginUser(log_req)
-		c.JSON(log_res.ResponseCode,&log_res)
-		log_req = Structs.LoginRequest{}
+	friend.POST("/accept", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"msg": "/friend/accept",
+		})
 	})
+	friend.POST("/reject", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"msg": "/friend/reject",
+		})
+	})
+	friend.POST("/block", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"msg": "/friend/block",
+		})
+	})
+	friend.POST("/list-request", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"msg": "/friend/list-request",
+		})
+	})
+	friend.POST("/list-friends", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"msg": "/friend/list-friends",
+		})
+	})
+
+	friend.POST("/list-friends-between", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"success": true,
+			"msg": "/friend/list-friends-between",
+		})
+	})
+	// End Friend Group
+
+
+	// router.POST("/register", func(c *gin.Context) {
+	// 	// using BindJson method to serialize body with struct
+	// 	if err := c.BindJSON(&reg_req); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"responseCode": 201,
+	// 			"error": err.Error(),
+	// 		})
+	// 		reg_req = Structs.RegisterRequest{}
+	// 		return
+	// 	}
+
+	// 	if err := validate.Struct(reg_req); err != nil {
+	// 		errs := Validator.ToErrResponse(err, trans)
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"responseCode": 202,
+	// 			"error": errs,
+	// 		})
+	// 		reg_req = Structs.RegisterRequest{}
+	// 		return
+	// 	}
+
+	// 	reg_res = Api.RegisterUser(reg_req)
+	// 	c.JSON(reg_res.ResponseCode,&reg_res)
+	// 	reg_req = Structs.RegisterRequest{}
+	// })
+
+
+	// router.POST("/login", func(c *gin.Context) {
+	// 	// using BindJson method to serialize body with struct
+	// 	if err := c.BindJSON(&log_req); err != nil {
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"responseCode": 201,
+	// 			"error": err.Error(),
+	// 		})
+	// 		log_req = Structs.LoginRequest{}
+	// 		return
+	// 	}
+
+	// 	if err := validate.Struct(log_req); err != nil {
+	// 		errs := Validator.ToErrResponse(err, trans)
+	// 		c.JSON(http.StatusBadRequest, gin.H{
+	// 			"responseCode": 202,
+	// 			"error": errs,
+	// 		})
+	// 		log_req = Structs.LoginRequest{}
+	// 		return
+	// 	}
+
+	// 	log_res = Api.LoginUser(log_req)
+	// 	c.JSON(log_res.ResponseCode,&log_res)
+	// 	log_req = Structs.LoginRequest{}
+	// })
 	// // END DEFAULT ROUTE
 }

@@ -26,9 +26,7 @@ func main() {
 	defer Database.Mysql.Close()
 	// auto migrate
 	Database.Mysql.AutoMigrate(&Models.User{})
-	Database.Mysql.AutoMigrate(&Models.Category{})
-	Database.Mysql.AutoMigrate(&Models.Product{})
-	Database.Mysql.AutoMigrate(&Models.Cart{})
+	Database.Mysql.AutoMigrate(&Models.Friend{})
 
 	// GRPC
 	// Here will enable grpc server, if you don`t want it, you can disable it

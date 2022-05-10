@@ -1,6 +1,6 @@
-# [Golang RestAPI with JWT]:
+# [Golang golang-restAPI-FR]:
 
-Build with golang and gin with jwt authentication. It features a simple and better performance, and customize with requirements needed.
+Build simple golang restfull API. It features a simple and better performance, and customize with requirements needed.
 
 ### Required
 
