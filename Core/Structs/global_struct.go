@@ -1,10 +1,10 @@
 package Structs
 
 type SuccessResponse struct {
-	Status	bool `json:"status"`
+	Success	bool `json:"success"`
 }
 
 type ErrorResponse struct {
-	Status	bool 	`json:"status"`
-	Msg		string `json:"msg"`
+	Success	bool 	`json:"success"`
+	Msg		string	`json:"msg"`
 }

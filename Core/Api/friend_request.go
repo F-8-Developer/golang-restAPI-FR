@@ -11,8 +11,8 @@ var (
 )
 
 func FriendRequest(frq_req Structs.FriendRequestRequest) interface{} {
-	success_response.Status = true
-	error_response.Status = false
+	success_response.Success = true
+	error_response.Success = false
 	var friend_requestor Models.User
 	var user Models.User
 	var friend Models.Friend
@@ -31,7 +31,7 @@ func FriendRequest(frq_req Structs.FriendRequestRequest) interface{} {
 	}
 	// ----------
 
-	if err := Models.CreateFriend(&friend, &user, &friend_requestor); err != nil {
+	if err := Models.CreateFriendRequest(&friend, &user, &friend_requestor); err != nil {
 		error_response.Msg = err.Error()
 		return error_response
 	}

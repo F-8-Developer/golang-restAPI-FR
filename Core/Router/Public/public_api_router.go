@@ -45,7 +45,7 @@ func APIRouter(router *gin.Engine) {
 		// using BindJson method to serialize body with struct
 		if err := c.BindJSON(&frq_req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"status": false,
+				"success": false,
 				"error": err.Error(),
 			})
 			frq_req = Structs.FriendRequestRequest{}
@@ -55,7 +55,7 @@ func APIRouter(router *gin.Engine) {
 		if err := validate.Struct(frq_req); err != nil {
 			errs := Validator.ToErrResponse(err, trans)
 			c.JSON(http.StatusBadRequest, gin.H{
-				"status": false,
+				"success": false,
 				"errors": errs.Errors,
 			})
 			frq_req = Structs.FriendRequestRequest{}
@@ -69,10 +69,29 @@ func APIRouter(router *gin.Engine) {
 
 
 	friend.POST("/accept", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"msg": "/friend/accept",
-		})
+		// using BindJson method to serialize body with struct
+		if err := c.BindJSON(&frq_req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error": err.Error(),
+			})
+			frq_req = Structs.FriendRequestRequest{}
+			return
+		}
+
+		if err := validate.Struct(frq_req); err != nil {
+			errs := Validator.ToErrResponse(err, trans)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"errors": errs.Errors,
+			})
+			frq_req = Structs.FriendRequestRequest{}
+			return
+		}
+
+		response := Api.UpdateFriendRequest(frq_req, "request", "accepted")
+		c.JSON(200,&response)
+		frq_req = Structs.FriendRequestRequest{}
 	})
 	friend.POST("/reject", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
