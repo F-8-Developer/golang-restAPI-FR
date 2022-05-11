@@ -1,6 +1,7 @@
 package Models
 
 import (
+	"fmt"
 	"golang-restAPI-FR/Database"
 	"golang-restAPI-FR/Core/Utils"
 	_ "github.com/go-sql-driver/mysql"
@@ -133,8 +134,12 @@ func CreateFriendRequest(frd *Friend) error {
 // Update friend request status and return error info.
 // err := Models.FindFriend(&frd, status);
 func UpdateFriendRequest(frd *Friend, status string) error {
-	Database.Mysql.First(&frd)
+	err := Database.Mysql.
+		Where("user_id = ?", frd.UserID).
+		Where("friend_request_id = ?", frd.FriendRequestID).
+		First(&frd).Error
 	frd.Status = status
-	err := Database.Mysql.Save(&frd).Error
+	err = Database.Mysql.Save(&frd).Error
+	fmt.Println(frd)
 	return err
 }

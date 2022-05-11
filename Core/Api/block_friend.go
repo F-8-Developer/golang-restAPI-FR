@@ -1,6 +1,7 @@
 package Api
 
 import (
+	"fmt"
 	"golang-restAPI-FR/Core/Structs"
 	"golang-restAPI-FR/Core/Models"
 )
@@ -31,14 +32,18 @@ func BlockFriend(frq_req Structs.FriendRequestRequest) interface{} {
 	}
 	// ----------
 
-	// create friend request
+	// create friend struct
 	friend.UserID = user.ID
 	friend.FriendRequestID = friend_requestor.ID
+	fmt.Println(friend)
 
 	if err := Models.FindFriendRequest(&friend, []string{"blocked"}); err == nil {
 		error_response.Msg = "Friend request already blocked"
 		return error_response
 	}
+
+	fmt.Println("===========")
+	fmt.Println(friend)
 
 	if err := Models.UpdateFriendRequest(&friend, "blocked"); err != nil {
 		if err := Models.CreateFriendRequest(&friend); err != nil {

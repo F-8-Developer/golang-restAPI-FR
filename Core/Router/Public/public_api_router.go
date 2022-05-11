@@ -194,7 +194,7 @@ func APIRouter(router *gin.Engine) {
 			return
 		}
 
-		response := Api.ListFriendRequest(frl_req)
+		response := Api.ListFriend(frl_req)
 		c.JSON(200,&response)
 		frl_req = Structs.FriendListRequest{}
 	})
