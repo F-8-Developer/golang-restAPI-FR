@@ -89,7 +89,11 @@ docker container ls
 
 ```sh
 # Download container image from https://hub.docker.com/
-docker container run --name golang-restapi-fr -e APP_ADDRESS=0.0.0.0:7070 -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=8889 -e DB_DATABASE=rest_api_db -e DB_USERNAME=root -e DB_PASSWORD=root -p 7070:7070 jinrave/golang-restapi-fr
+docker container create --name golang-restapi-fr -e APP_ADDRESS=0.0.0.0:7070 -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=8889 -e DB_DATABASE=rest_api_db -e DB_USERNAME=root -e DB_PASSWORD=root -p 7070:7070 jinrave/golang-restapi-fr
+
+# Start Container
+docker container start golang-restapi-fr
+docker container ls
 
 ```
 
