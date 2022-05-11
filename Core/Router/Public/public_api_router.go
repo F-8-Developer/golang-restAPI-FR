@@ -16,6 +16,7 @@ import (
 
 var (
 	frq_req Structs.FriendRequestRequest
+	fbl_req Structs.FriendBlockRequest
 	frl_req Structs.FriendListRequest
 	frb_req Structs.FriendBetweenRequest
 )
@@ -123,28 +124,28 @@ func APIRouter(router *gin.Engine) {
 
 	friend.POST("/block", func(c *gin.Context) {
 		// using BindJson method to serialize body with struct
-		if err := c.BindJSON(&frq_req); err != nil {
+		if err := c.BindJSON(&fbl_req); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"success": false,
 				"error": err.Error(),
 			})
-			frq_req = Structs.FriendRequestRequest{}
+			fbl_req = Structs.FriendBlockRequest{}
 			return
 		}
 
-		if err := validate.Struct(frq_req); err != nil {
+		if err := validate.Struct(fbl_req); err != nil {
 			errs := Validator.ToErrResponse(err, trans)
 			c.JSON(http.StatusBadRequest, gin.H{
 				"success": false,
 				"errors": errs.Errors,
 			})
-			frq_req = Structs.FriendRequestRequest{}
+			fbl_req = Structs.FriendBlockRequest{}
 			return
 		}
 
-		response := Api.BlockFriend(frq_req)
+		response := Api.BlockFriend(fbl_req)
 		c.JSON(200,&response)
-		frq_req = Structs.FriendRequestRequest{}
+		fbl_req = Structs.FriendBlockRequest{}
 	})
 
 	friend.POST("/list-request", func(c *gin.Context) {

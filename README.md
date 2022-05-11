@@ -36,6 +36,17 @@ go mod vendor
 ```sh
 cp .env.example .env
 # change default config .env with your local config
+
+APP_ENV=development
+APP_ADDRESS=0.0.0.0:7070
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=rest_api_db
+DB_USERNAME=root
+DB_PASSWORD=
+
 ```
 
 * Database Note
@@ -49,324 +60,207 @@ cp .env.example .env
 go run server.go
 ```
 
-If running normally, you can access <a href="http://localhost:8080">http://localhost:8080</a>
+If running normally, you can access <a href="http://0.0.0.0:7070">http://0.0.0.0:7070</a>
 
 ---
 <h2>Rest API</h2>
 
 1. Endpoint
 
-    | METHOD | URL                     | INFO                                              |
-    | ------ | :-------------          | :-------------                                    |
-    | GET    | /                       | index pa                                          |
-    | POST   | /register               | for create user                                   |
-    | POST   | /login                  | login user and generate jwt token                 |
-    | POST   | /secure/category/list   | check all category in database                    |
-    | POST   | /secure/product/list    | check all product in database                     |
-    | POST   | /secure/product/detail  | check product detail by product id                |
-    | POST   | /secure/cart/add        | add product to cart                               |
-    | POST   | /secure/cart/list       | check user cart (get user from jwt claims email)  |
+    | METHOD | URL                          | INFO                                              |
+    | ------ | :-------------               | :-------------                                    |
+    | GET    | /                            | index                                             |
+    | POST   | /friend/request              | for create a friend request                       |
+    | POST   | /friend/accept               | to accept friend request                          |
+    | POST   | /friend/reject               | to reject friend request                          |
+    | POST   | /friend/list-request         | list of friend requests by user email             |
+    | POST   | /friend/list-friends         | list of friends by user email                     |
+    | POST   | /friend/list-friends-between | friends list between two email addresses          |
+    | POST   | /friend/block                | blocked users cannot send friend request          |
 
 2. Example Api
-   > register api : http://localhost:8080/register
+   > friend request api : http://0.0.0.0:7070/friend/request
 
     ```text
-    request:
-
-    POST /register HTTP/1.1
-    Host: localhost:8080
+    POST /friend/request HTTP/1.1
+    Host: 0.0.0.0:7070
     Content-Type: application/json
-    Content-Length: 111
+    Content-Length: 69
 
     {
-        "name": "faishal amrullah",
-        "email": "c.faishal.amrullah@gmail.com",
-        "password": "faishal123$#"
+        "requestor": "andy@example.com",
+        "to": "john@example.com"
     }
     
     response:
     {
-        "responseCode": 200,
-        "responseMsg": "User successfully register"
+        "success": true
     }
     ```
-    ![Gopher image](Doc/register.png)
+    ![Gopher image](Doc/friend-request.png)
     <br>
     <br>
     <br>
-    > login api : http://localhost:8080/login
+    > accept friend request api : http://0.0.0.0:7070/friend/accept
 
     ```text
     request:
 
-    POST /login HTTP/1.1
-    Host: localhost:8080
+    POST /friend/accept HTTP/1.1
+    Host: 0.0.0.0:7070
     Content-Type: application/json
-    Content-Length: 81
+    Content-Length: 69
 
     {
-        "email" : "c.faishal.amrullah@gmail.com",
-        "password" : "faishal123$#"
+        "requestor": "andy@example.com",
+        "to": "john@example.com"
     }
     
     response:
     {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmFpc2hhbCBhbXJ1bGxhaCIsImVtYWlsIjoiYy5mYWlzaGFsLmFtcnVsbGFoQGdtYWlsLmNvbSIsImV4cCI6MTY1MTAxMjU5MX0.Sv1hXav7BbwjIEo2aY6MQb8oPD11bB9cq00TQxvyhLk",
-        "responseCode": 200,
-        "responseMsg": "User successfully login"
+        "success": true
     }
     ```
-    ![Gopher image](Doc/login.png)
+    ![Gopher image](Doc/accepted-friend-request.png)
     <br>
     <br>
     <br>
-    > category list api : http://localhost:8080/secure/category/list
+    > reject friend request api : http://0.0.0.0:7070/friend/reject
+
+    ```text
+    POST /friend/reject HTTP/1.1
+    Host: 0.0.0.0:7070
+    Content-Type: application/json
+    Content-Length: 69
+
+    {
+        "requestor": "andy@example.com",
+        "to": "john@example.com"
+    }
+
+    response:
+    {
+        "success": true
+    }
+
+    ##
+    # if friend request already accepted or there in no friend request, will return "success": false
+    ##
+    ```
+    ![Gopher image](Doc/rejected-friend-request.png)
+    <br>
+    <br>
+    <br>
+    > list of friend requests api : http://0.0.0.0:7070/friend/list-request
 
     ```text
     request:
 
-    POST /secure/category/list HTTP/1.1
-    Host: localhost:8080
-    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmFpc2hhbCBhbXJ1bGxhaCIsImVtYWlsIjoiYy5mYWlzaGFsLmFtcnVsbGFoQGdtYWlsLmNvbSIsImV4cCI6MTY1MTAxMjU5MX0.Sv1hXav7BbwjIEo2aY6MQb8oPD11bB9cq00TQxvyhLk
-    
+    POST /friend/list-request HTTP/1.1
+    Host: 0.0.0.0:7070
+    Content-Type: application/json
+    Content-Length: 36
+
+    {
+        "email": "john@example.com" 
+    }
+
     response:
     {
-        "categories": [
+        "requests": [
             {
-                "ID": 1,
-                "Name": "buah",
-                "Descriptions": "buah"
+                "requestor": "andy@example.com",
+                "status": "accepted"
             },
             {
-                "ID": 2,
-                "Name": "sayur",
-                "Descriptions": "sayur"
+                "requestor": "joe@example.com",
+                "status": "rejected"
             },
             {
-                "ID": 3,
-                "Name": "rempah-rempah",
-                "Descriptions": "rempah-rempah"
+                "requestor": "grace@example.com",
+                "status": "pending"
             }
-        ],
-        "responseCode": 200,
-        "responseMsg": "List Categories successful"
+        ]
     }
     ```
-    ![Gopher image](Doc/category-list.png)
+    ![Gopher image](Doc/list-friend-requests.png)
     <br>
-    <br>
-    <br>
-    > product list api : http://localhost:8080/secure/product/list
-
-    ```text
-    request:
-
-    POST /secure/product/list HTTP/1.1
-    Host: localhost:8080
-    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmFpc2hhbCBhbXJ1bGxhaCIsImVtYWlsIjoiYy5mYWlzaGFsLmFtcnVsbGFoQGdtYWlsLmNvbSIsImV4cCI6MTY1MTAxMjU5MX0.Sv1hXav7BbwjIEo2aY6MQb8oPD11bB9cq00TQxvyhLk
-    
-    response:
-    {
-        "products": [
-            {
-                "ID": 1,
-                "Categories": [
-                    {
-                        "ID": 1,
-                        "Name": "buah",
-                        "Descriptions": "buah"
-                    }
-                ],
-                "Name": "Anggur Merah Globe",
-                "Descriptions": "Anggur Merah Globe (~0.65 kg)",
-                "Quantity": 88,
-                "Price": 56200
-            },
-            {
-                "ID": 2,
-                "Categories": [
-                    {
-                        "ID": 1,
-                        "Name": "buah",
-                        "Descriptions": "buah"
-                    }
-                ],
-                "Name": "Apel Fuji Jingle",
-                "Descriptions": "Apel Fuji Jingle (~0.3 kg)",
-                "Quantity": 100,
-                "Price": 15000
-            },
-            {
-                "ID": 3,
-                "Categories": [
-                    {
-                        "ID": 2,
-                        "Name": "sayur",
-                        "Descriptions": "sayur"
-                    }
-                ],
-                "Name": "Wortel",
-                "Descriptions": "Wortel (~0.1 kg)",
-                "Quantity": 100,
-                "Price": 1700
-            },
-            {
-                "ID": 4,
-                "Categories": [
-                    {
-                        "ID": 2,
-                        "Name": "sayur",
-                        "Descriptions": "sayur"
-                    }
-                ],
-                "Name": "Kol Putih",
-                "Descriptions": "Kol Putih (~1 kg)",
-                "Quantity": 100,
-                "Price": 18000
-            },
-            {
-                "ID": 5,
-                "Categories": [
-                    {
-                        "ID": 3,
-                        "Name": "rempah-rempah",
-                        "Descriptions": "rempah-rempah"
-                    }
-                ],
-                "Name": "Lengkuas",
-                "Descriptions": "Lengkuas (~0.2 kg)",
-                "Quantity": 100,
-                "Price": 8000
-            },
-            {
-                "ID": 6,
-                "Categories": [
-                    {
-                        "ID": 3,
-                        "Name": "rempah-rempah",
-                        "Descriptions": "rempah-rempah"
-                    }
-                ],
-                "Name": "Jahe",
-                "Descriptions": "Jahe (~0.2 kg)",
-                "Quantity": 100,
-                "Price": 10800
-            }
-        ],
-        "responseCode": 200,
-        "responseMsg": "List Products successful"
-    }
-    ```
     <br>
     <br>
     
-    > product detail api : http://localhost:8080/secure/product/detail
+    > list of friends api : http://0.0.0.0:7070/friend/list-friends
 
     ```text
-    request:
-
-    POST /secure/product/detail HTTP/1.1
-    Host: localhost:8080
-    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmFpc2hhbCBhbXJ1bGxhaCIsImVtYWlsIjoiYy5mYWlzaGFsLmFtcnVsbGFoQGdtYWlsLmNvbSIsImV4cCI6MTY1MTAxMjU5MX0.Sv1hXav7BbwjIEo2aY6MQb8oPD11bB9cq00TQxvyhLk
+    POST /friend/list-friends HTTP/1.1
+    Host: 0.0.0.0:7070
     Content-Type: application/json
-    Content-Length: 23
+    Content-Length: 36
 
     {
-        "productID" : 3
+        "email": "andy@example.com" 
     }
     
     response:
     {
-        "product": {
-            "ID": 3,
-            "Categories": [
-                {
-                    "ID": 2,
-                    "Name": "sayur",
-                    "Descriptions": "sayur"
-                }
-            ],
-            "Name": "Wortel",
-            "Descriptions": "Wortel (~0.1 kg)",
-            "Quantity": 100,
-            "Price": 1700
-        },
-        "responseCode": 200,
-        "responseMsg": "Product detail successful"
+        "friends": [
+            "john@example.com",
+            "joe@example.com"
+        ]
     }
     ```
-    ![Gopher image](Doc/product-detail.png)
+    ![Gopher image](Doc/list-friends.png)
     <br>
     <br>
     <br>
-    > cart add api : http://localhost:8080/secure/cart/add
+    > friends list between api : http://0.0.0.0:7070/friend/list-friends-between
 
     ```text
-    request:
-
-    POST /secure/cart/add HTTP/1.1
-    Host: localhost:8080
-    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmFpc2hhbCBhbXJ1bGxhaCIsImVtYWlsIjoiYy5mYWlzaGFsLmFtcnVsbGFoQGdtYWlsLmNvbSIsImV4cCI6MTY1MTAxMjU5MX0.Sv1hXav7BbwjIEo2aY6MQb8oPD11bB9cq00TQxvyhLk
+    POST /friend/list-friends-between HTTP/1.1
+    Host: localhost:7070
     Content-Type: application/json
-    Content-Length: 44
+    Content-Length: 80
 
     {
-        "productID" : 3,
-        "quantity" : 10
+        "friends":[
+            "andy@example.com",
+            "john@example.com"
+        ]
     }
     
     response:
     {
-        "responseCode": 200,
-        "responseMsg": "Product successfully add to cart"
+        "success": true,
+        "friends": [
+            "frank@example.com"
+        ],
+        "count": 1
     }
     ```
-    ![Gopher image](Doc/cart-add.png)
+    ![Gopher image](Doc/list-friends-between.png)
     <br>
     <br>
     <br>
-    > cart list api : http://localhost:8080/secure/cart/list
+    > friend block api : http://0.0.0.0:7070/friend/block
 
     ```text
-    request:
+    POST /friend/block HTTP/1.1
+    Host: 0.0.0.0:7070
+    Content-Type: application/json
+    Content-Length: 73
 
-    POST /secure/cart/list HTTP/1.1
-    Host: localhost:8080
-    Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZmFpc2hhbCBhbXJ1bGxhaCIsImVtYWlsIjoiYy5mYWlzaGFsLmFtcnVsbGFoQGdtYWlsLmNvbSIsImV4cCI6MTY1MTAxMjU5MX0.Sv1hXav7BbwjIEo2aY6MQb8oPD11bB9cq00TQxvyhLk
+    {
+        "requestor": "andry@example.com",
+        "block": "john@example.com"
+    }
     
     response:
     {
-        "cart": [
-            {
-                "ID": 1,
-                "User": {
-                    "Name": "faishal amrullah",
-                    "Email": "c.faishal.amrullah@gmail.com"
-                },
-                "Product": {
-                    "ID": 3,
-                    "Categories": [
-                        {
-                            "ID": 2,
-                            "Name": "sayur",
-                            "Descriptions": "sayur"
-                        }
-                    ],
-                    "Name": "Wortel",
-                    "Descriptions": "Wortel (~0.1 kg)",
-                    "Quantity": 90,
-                    "Price": 1700
-                },
-                "Quantity": 10,
-                "Price": 1700,
-                "Total": 17000
-            }
-        ],
-        "responseCode": 200,
-        "responseMsg": "List Cart successful"
+        "success": true
     }
     ```
-    ![Gopher image](Doc/cart-list.png)
+    ![Gopher image](Doc/friend-block.png)
+    <br>
+    ![Gopher image](Doc/block-friend-request.png)
     <br>
     <br>
     <br>

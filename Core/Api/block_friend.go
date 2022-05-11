@@ -1,7 +1,6 @@
 package Api
 
 import (
-	"fmt"
 	"golang-restAPI-FR/Core/Structs"
 	"golang-restAPI-FR/Core/Models"
 )
@@ -11,7 +10,7 @@ var (
 	error_response Structs.ErrorResponse
 )
 
-func BlockFriend(frq_req Structs.FriendRequestRequest) interface{} {
+func BlockFriend(fbl_req Structs.FriendBlockRequest) interface{} {
 	success_response.Success = true
 	error_response.Success = false
 	var friend_requestor Models.User
@@ -20,12 +19,12 @@ func BlockFriend(frq_req Structs.FriendRequestRequest) interface{} {
 	friend.Status = "blocked"
 
 	// store user email requestor and receiver
-	friend_requestor.Email = frq_req.Requestor
+	friend_requestor.Email = fbl_req.Requestor
 	if err := Models.CreateUser(&friend_requestor); err != nil {
 		error_response.Msg = err.Error()
 		return error_response
 	}
-	user.Email = frq_req.To
+	user.Email = fbl_req.Block
 	if err := Models.CreateUser(&user); err != nil {
 		error_response.Msg = err.Error()
 		return error_response
@@ -35,15 +34,11 @@ func BlockFriend(frq_req Structs.FriendRequestRequest) interface{} {
 	// create friend struct
 	friend.UserID = user.ID
 	friend.FriendRequestID = friend_requestor.ID
-	fmt.Println(friend)
 
 	if err := Models.FindFriendRequest(&friend, []string{"blocked"}); err == nil {
 		error_response.Msg = "Friend request already blocked"
 		return error_response
 	}
-
-	fmt.Println("===========")
-	fmt.Println(friend)
 
 	if err := Models.UpdateFriendRequest(&friend, "blocked"); err != nil {
 		if err := Models.CreateFriendRequest(&friend); err != nil {

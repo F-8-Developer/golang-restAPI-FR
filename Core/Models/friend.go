@@ -1,7 +1,6 @@
 package Models
 
 import (
-	"fmt"
 	"golang-restAPI-FR/Database"
 	"golang-restAPI-FR/Core/Utils"
 	_ "github.com/go-sql-driver/mysql"
@@ -140,6 +139,5 @@ func UpdateFriendRequest(frd *Friend, status string) error {
 		First(&frd).Error
 	frd.Status = status
 	err = Database.Mysql.Save(&frd).Error
-	fmt.Println(frd)
 	return err
 }
