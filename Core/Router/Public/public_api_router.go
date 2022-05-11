@@ -173,10 +173,29 @@ func APIRouter(router *gin.Engine) {
 	})
 
 	friend.POST("/list-friends", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"msg": "/friend/list-friends",
-		})
+		// using BindJson method to serialize body with struct
+		if err := c.BindJSON(&frl_req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error": err.Error(),
+			})
+			frl_req = Structs.FriendListRequest{}
+			return
+		}
+
+		if err := validate.Struct(frl_req); err != nil {
+			errs := Validator.ToErrResponse(err, trans)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"errors": errs.Errors,
+			})
+			frl_req = Structs.FriendListRequest{}
+			return
+		}
+
+		response := Api.ListFriend(frl_req)
+		c.JSON(200,&response)
+		frl_req = Structs.FriendListRequest{}
 	})
 
 	friend.POST("/list-friends-between", func(c *gin.Context) {

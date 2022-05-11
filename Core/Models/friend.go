@@ -15,6 +15,10 @@ type Friend struct {
 	Status			string	`gorm:"column:status"`
 }
 
+type APIFriendList struct {
+	Friends		[]string	`json:"friends"`
+}
+
 type APIFriendRequest struct {
 	Requests	[]FriendRequestList	`json:"requests"`
 }
@@ -39,16 +43,16 @@ func FindFriendRequest(frd *Friend, status []string) error {
 	return err
 }
 
-// List of friend and return error info.
-// list, err := Models.FriendRequestListQuery();
+// List of friend request and return error info.
+// list, err := Models.FriendRequestListQuery(&usr);
 func FriendRequestListQuery(usr *User) (response APIFriendRequest, err error) {
 	var requestor, status string
 	list := []FriendRequestList{}
 
 	rows, err := Database.Mysql.Model(&Friend{}).
 		Joins("JOIN users as friend_request on friend_request.id = friends.friend_request_id").
-		Where("user_id = ?", usr.ID).
-		Where("status IN (?)", []string{"pending", "accepted", "rejected"}).
+		Where("friends.user_id = ?", usr.ID).
+		Where("friends.status IN (?)", []string{"pending", "accepted", "rejected"}).
 		Select("friend_request.email, friends.status").Rows()
 	defer rows.Close()
 	if err != nil {
@@ -60,6 +64,30 @@ func FriendRequestListQuery(usr *User) (response APIFriendRequest, err error) {
 		list = append(list, FriendRequestList{Requestor:requestor,Status:status})
     }
 	response.Requests = list
+	return
+}
+
+// List of friend and return error info.
+// list, err := Models.FriendListQuery(&usr);
+func FriendListQuery(usr *User) (response APIFriendList, err error) {
+	var email string
+	list := []string{}
+
+	rows, err := Database.Mysql.Model(&Friend{}).
+		Joins("JOIN users as friend_request on friend_request.id = friends.friend_request_id").
+		Where("friends.user_id = ?", usr.ID).
+		Where("friends.status = ?", "accepted").
+		Select("friend_request.email").Rows()
+	defer rows.Close()
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+        rows.Scan(&email)
+		list = append(list, email)
+    }
+	response.Friends = list
 	return
 }
 
