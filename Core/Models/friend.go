@@ -1,8 +1,8 @@
 package Models
 
 import (
-	// "fmt"
 	"golang-restAPI-FR/Database"
+	"golang-restAPI-FR/Core/Utils"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -17,6 +17,12 @@ type Friend struct {
 
 type APIFriendList struct {
 	Friends		[]string	`json:"friends"`
+}
+
+type APIFriendListBetween struct {
+	Success		bool		`json:"success"`
+	Friends		[]string	`json:"friends"`
+	Count		int			`json:"count"`
 }
 
 type APIFriendRequest struct {
@@ -43,6 +49,56 @@ func FindFriendRequest(frd *Friend, status []string) error {
 	return err
 }
 
+// List of friend and return error info.
+// list, err := Models.FriendListQuery(&usr);
+func FriendListQuery(usr *User) (response APIFriendList, err error) {
+	var email string
+	list := []string{}
+
+	rows, err := Database.Mysql.Model(&Friend{}).
+		Joins("JOIN users on users.id = friends.user_id").
+		Joins("JOIN users as friend_request on friend_request.id = friends.friend_request_id").
+		Where("friends.user_id = ? OR friends.friend_request_id = ?", usr.ID, usr.ID).
+		Where("friends.status = ?", "accepted").
+		Select("IF(friend_request_id=?,users.email,friend_request.email)", usr.ID).Rows()
+	defer rows.Close()
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+        rows.Scan(&email)
+		list = append(list, email)
+    }
+	response.Friends = list
+	return
+}
+
+// List of friend between and return error info.
+// list, err := Models.FriendListBetweenQuery(&usr1, &usr2);
+func FriendListBetweenQuery(usr1, usr2 User) (response APIFriendListBetween, err error) {
+	response.Success = true
+
+	// get friend usr1
+	list1, err := FriendListQuery(&usr1)
+	if err != nil {
+		return 
+	}
+	// get friend usr2
+	list2, err := FriendListQuery(&usr2)
+	if err != nil {
+		return 
+	}
+
+	// intersection array
+	response.Friends = Utils.IntersectionString(list1.Friends, list2.Friends)
+	if response.Friends == nil {
+		response.Friends = []string{}
+	}
+	response.Count = len(response.Friends)
+	return
+}
+
 // List of friend request and return error info.
 // list, err := Models.FriendRequestListQuery(&usr);
 func FriendRequestListQuery(usr *User) (response APIFriendRequest, err error) {
@@ -64,30 +120,6 @@ func FriendRequestListQuery(usr *User) (response APIFriendRequest, err error) {
 		list = append(list, FriendRequestList{Requestor:requestor,Status:status})
     }
 	response.Requests = list
-	return
-}
-
-// List of friend and return error info.
-// list, err := Models.FriendListQuery(&usr);
-func FriendListQuery(usr *User) (response APIFriendList, err error) {
-	var email string
-	list := []string{}
-
-	rows, err := Database.Mysql.Model(&Friend{}).
-		Joins("JOIN users as friend_request on friend_request.id = friends.friend_request_id").
-		Where("friends.user_id = ?", usr.ID).
-		Where("friends.status = ?", "accepted").
-		Select("friend_request.email").Rows()
-	defer rows.Close()
-	if err != nil {
-		return
-	}
-
-	for rows.Next() {
-        rows.Scan(&email)
-		list = append(list, email)
-    }
-	response.Friends = list
 	return
 }
 

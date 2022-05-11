@@ -8,3 +8,7 @@ type FriendRequestRequest struct {
 type FriendListRequest struct {
 	Email	string	`json:"email" validate:"required,email,max=255"`
 }
+
+type FriendBetweenRequest struct {
+	Friends	[]string	`json:"friends" validate:"gt=0,dive,required,email"`
+}
