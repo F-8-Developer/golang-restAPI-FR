@@ -1,4 +1,4 @@
-# [Golang golang-restAPI-FR]:
+# [ golang-restAPI-FR ]:
 
 Build simple golang restfull API. It features a simple and better performance, and customize with requirements needed.
 
@@ -73,8 +73,12 @@ If running normally, you can access <a href="http://0.0.0.0:7070">http://0.0.0.0
 # Compile the image
 docker build -t golang-restapi-fr .
 
-# Run container
-docker container run --name golang-restapi-rf -e APP_ADDRESS=0.0.0.0:7070 -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=8889 -e DB_DATABASE=rest_api_db -e DB_USERNAME=root -e DB_PASSWORD=root -p 7070:7070 golang-restapi-rf
+# Create container
+docker container create --name golang-restapi-fr -e APP_ADDRESS=0.0.0.0:7070 -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=8889 -e DB_DATABASE=rest_api_db -e DB_USERNAME=root -e DB_PASSWORD=root -p 7070:7070 golang-restapi-fr
+
+# Start Container
+docker container start golang-restapi-fr
+docker container ls
 
 # for mac user check database connection because DB_HOST=docker.for.mac.localhost
 # command check log docker container
@@ -85,7 +89,7 @@ docker container run --name golang-restapi-rf -e APP_ADDRESS=0.0.0.0:7070 -e DB_
 
 ```sh
 # Download container image from https://hub.docker.com/
-docker container run --name golang-restapi-rf -e APP_ADDRESS=0.0.0.0:7070 -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=8889 -e DB_DATABASE=rest_api_db -e DB_USERNAME=root -e DB_PASSWORD=root -p 7070:7070 jinrave/golang-restapi-rf
+docker container run --name golang-restapi-fr -e APP_ADDRESS=0.0.0.0:7070 -e DB_CONNECTION=mysql -e DB_HOST=127.0.0.1 -e DB_PORT=8889 -e DB_DATABASE=rest_api_db -e DB_USERNAME=root -e DB_PASSWORD=root -p 7070:7070 jinrave/golang-restapi-fr
 
 ```
 
