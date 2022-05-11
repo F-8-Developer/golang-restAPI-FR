@@ -67,7 +67,6 @@ func APIRouter(router *gin.Engine) {
 		frq_req = Structs.FriendRequestRequest{}
 	})
 
-
 	friend.POST("/accept", func(c *gin.Context) {
 		// using BindJson method to serialize body with struct
 		if err := c.BindJSON(&frq_req); err != nil {
@@ -89,22 +88,63 @@ func APIRouter(router *gin.Engine) {
 			return
 		}
 
-		response := Api.UpdateFriendRequest(frq_req, "request", "accepted")
+		response := Api.UpdateFriendRequest(frq_req, "pending", "accepted")
 		c.JSON(200,&response)
 		frq_req = Structs.FriendRequestRequest{}
 	})
+
 	friend.POST("/reject", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"msg": "/friend/reject",
-		})
+		// using BindJson method to serialize body with struct
+		if err := c.BindJSON(&frq_req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error": err.Error(),
+			})
+			frq_req = Structs.FriendRequestRequest{}
+			return
+		}
+
+		if err := validate.Struct(frq_req); err != nil {
+			errs := Validator.ToErrResponse(err, trans)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"errors": errs.Errors,
+			})
+			frq_req = Structs.FriendRequestRequest{}
+			return
+		}
+
+		response := Api.UpdateFriendRequest(frq_req, "pending", "rejected")
+		c.JSON(200,&response)
+		frq_req = Structs.FriendRequestRequest{}
 	})
+
 	friend.POST("/block", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"success": true,
-			"msg": "/friend/block",
-		})
+		// using BindJson method to serialize body with struct
+		if err := c.BindJSON(&frq_req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error": err.Error(),
+			})
+			frq_req = Structs.FriendRequestRequest{}
+			return
+		}
+
+		if err := validate.Struct(frq_req); err != nil {
+			errs := Validator.ToErrResponse(err, trans)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"errors": errs.Errors,
+			})
+			frq_req = Structs.FriendRequestRequest{}
+			return
+		}
+
+		response := Api.BlockFriend(frq_req)
+		c.JSON(200,&response)
+		frq_req = Structs.FriendRequestRequest{}
 	})
+
 	friend.POST("/list-request", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"success": true,

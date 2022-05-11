@@ -19,29 +19,28 @@ func (frd *Friend) TableName() string {
 }
 
 // Find friend request and return error info.
-// err := Models.FindFriend(&frd, &usr, &friend_request, status);
-func FindFriendRequest(frd *Friend, usr *User, friend_request *User, status string) error {
+// err := Models.FindFriend(&frd, []string{"pending"});
+func FindFriendRequest(frd *Friend, status []string) error {
 	err := Database.Mysql.
-		Where("user_id = ?", usr.ID).
-		Where("friend_request_id = ?", friend_request.ID).
-		Where("status = ?", status).
+		Where("user_id = ?", frd.UserID).
+		Where("friend_request_id = ?", frd.FriendRequestID).
+		Where("status IN (?)", status).
 		First(frd).Error
 	return err
 }
 
 // Insert friend request which will be saved in database returning with error info
-// err := Models.CreateFriend(&frd, &usr, &friend_request);
-func CreateFriendRequest(frd *Friend, usr *User, friend_request *User) error {
-	err := Database.Mysql.FirstOrCreate(&frd, Friend{UserID: usr.ID, FriendRequestID: friend_request.ID}).Error
+// err := Models.CreateFriend(&frd);
+func CreateFriendRequest(frd *Friend) error {
+	err := Database.Mysql.Create(&frd).Error
 	return err
 }
 
 // Update friend request status and return error info.
-// err := Models.FindFriend(&frd, &usr, &friend_request, status);
-func UpdateFriendRequestStatus(frd *Friend, usr *User, friend_request *User, status string) error {
-	err := Database.Mysql.Model(&frd).
-		Where("user_id = ?", usr.ID).
-		Where("friend_request_id = ?", friend_request.ID).
-		Update("status", status).Error
+// err := Models.FindFriend(&frd, status);
+func UpdateFriendRequest(frd *Friend, status string) error {
+	Database.Mysql.First(&frd)
+	frd.Status = status
+	err := Database.Mysql.Save(&frd).Error
 	return err
 }

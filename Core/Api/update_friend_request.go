@@ -25,12 +25,16 @@ func UpdateFriendRequest(frq_req Structs.FriendRequestRequest, find_status strin
 	}
 	// ----------
 
-	if err := Models.FindFriendRequest(&friend, &user, &friend_requestor, find_status); err != nil {
+	// create friend request
+	friend.UserID = user.ID
+	friend.FriendRequestID = friend_requestor.ID
+
+	if err := Models.FindFriendRequest(&friend, []string{find_status}); err != nil {
 		error_response.Msg = "Friend " + find_status + " not found"
 		return error_response
 	}
 
-	if err := Models.UpdateFriendRequestStatus(&friend, &user, &friend_requestor, status); err != nil {
+	if err := Models.UpdateFriendRequest(&friend, status); err != nil {
 		error_response.Msg = err.Error()
 		return error_response
 	}
