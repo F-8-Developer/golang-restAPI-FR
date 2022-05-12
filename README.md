@@ -302,7 +302,7 @@ docker container ls
 ---
 <h2>Validation</h2>
 
-Add validation for /register, /login and /secure/cart/add for better experience
+Add validation to all request API for better experience.
 
 ---
 ## Authors
