@@ -19,7 +19,7 @@ Build simple golang restfull API. It features a simple and better performance, a
 
 * Init workdir
 ```sh
-git clone https://github.com/F-8-Developer/golang-restAPI-FR.git
+git clone https://github.com/F8-Developer/golang-restAPI-FR.git
 cd golang-restAPI-FR
 ```
 
